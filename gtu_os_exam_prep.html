@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTU OS Exam Prep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #4f46e5; /* Indigo 600 */
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
+        input[type=range]:focus { outline: none; }
+
+        .tab-btn { transition: all 0.2s ease-in-out; }
+        .tab-active { 
+            background-color: #4f46e5; 
+            color: white; 
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4);
+        }
+        .tab-inactive { 
+            background-color: transparent; 
+            color: #64748b; 
+        }
+        .tab-inactive:hover { 
+            background-color: #e0e7ff; 
+            color: #4f46e5; 
+        }
+
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Checkbox customization for Units */
+        .unit-checkbox:checked + div {
+            background-color: #e0e7ff;
+            border-color: #4f46e5;
+            color: #4f46e5;
+        }
+        .unit-checkbox:checked + div i {
+            color: #4f46e5;
+        }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <header class="bg-white shadow-sm z-20 relative border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center py-4 gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-indigo-600 text-white p-3 rounded-xl shadow-md bg-gradient-to-br from-indigo-500 to-purple-600">
+                        <i class="fa-solid fa-microchip text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold text-slate-900 leading-tight">Diploma Computer Eng. OS Prep</h1>
+                        <p class="text-sm font-semibold text-indigo-600 tracking-wide">GTU Subject: DI03000041</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 bg-indigo-50 px-4 py-2 rounded-full border border-indigo-100 shadow-sm">
+                    <span class="text-xl">👋</span>
+                    <span class="text-sm font-bold text-indigo-900">Welcome, Tishya!</span>
+                </div>
+            </div>
+            
+            <nav class="flex overflow-x-auto no-scrollbar py-2 gap-2 pb-4" aria-label="Tabs">
+                <button onclick="switchTab('exam')" id="tab-exam" class="tab-btn tab-active py-2 px-5 rounded-full font-semibold text-sm whitespace-nowrap flex items-center">
+                    <i class="fa-solid fa-file-pen mr-2"></i> Mock Exam
+                </button>
+                <button onclick="switchTab('mcq-bank')" id="tab-mcq-bank" class="tab-btn tab-inactive py-2 px-5 rounded-full font-semibold text-sm whitespace-nowrap flex items-center">
+                    <i class="fa-solid fa-layer-group mr-2"></i> MCQ Study Bank
+                </button>
+                <button onclick="switchTab('pyq-tracker')" id="tab-pyq-tracker" class="tab-btn tab-inactive py-2 px-5 rounded-full font-semibold text-sm whitespace-nowrap flex items-center">
+                    <i class="fa-solid fa-list-check mr-2"></i> PYQ Tracker
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow overflow-y-auto p-4 sm:p-6 relative bg-slate-50">
+        <div class="max-w-5xl mx-auto">
+
+            <!-- ================= TAB 1: MOCK EXAM ================= -->
+            <div id="view-exam" class="block animate-fade-in pb-12">
+                
+                <!-- SETUP SCREEN -->
+                <div id="exam-setup" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-4">
+                    <div class="p-6 md:p-8">
+                        <div class="mb-8 text-center">
+                            <h2 class="text-2xl font-bold text-slate-800 mb-2">Configure Practice Exam</h2>
+                            <p class="text-slate-500">Select exam mode and specific units to customize your test.</p>
+                        </div>
+
+                        <!-- Step 1: Exam Mode -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-bold text-slate-700 mb-4 border-b border-slate-100 pb-2">1. Select Exam Mode</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="flex items-center p-4 border-2 border-indigo-500 bg-indigo-50 rounded-xl cursor-pointer transition-colors" id="label-mode-full" onclick="selectMode('full')">
+                                    <input type="radio" name="examMode" value="full" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                                    <div class="ml-4 flex-1">
+                                        <span class="block font-bold text-slate-800 text-lg">Full Exam</span>
+                                        <span class="block text-sm text-slate-500">MCQs (10m) + Subjective (15m)</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors" id="label-mode-mcq" onclick="selectMode('mcq')">
+                                    <input type="radio" name="examMode" value="mcq" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                                    <div class="ml-4 flex-1">
+                                        <span class="block font-bold text-slate-800 text-lg">MCQ Only</span>
+                                        <span class="block text-sm text-slate-500">10 Random Auto-graded MCQs</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Chapter Selection -->
+                        <div class="mb-8">
+                            <div class="flex justify-between items-end mb-4 border-b border-slate-100 pb-2">
+                                <h3 class="text-lg font-bold text-slate-700">2. Select Chapters / Units</h3>
+                                <button onclick="toggleAllUnits()" id="btn-toggle-units" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">Select All</button>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3" id="unit-selection-container">
+                                <!-- Generated via JS -->
+                            </div>
+                            <p id="unit-error" class="text-red-500 text-sm font-semibold mt-2 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Please select at least one unit.</p>
+                        </div>
+                        
+                        <button onclick="startExam()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-indigo-200 transition-transform transform hover:-translate-y-0.5 flex justify-center items-center text-lg">
+                            Start Exam <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ACTIVE EXAM SCREEN -->
+                <div id="active-exam" class="hidden">
+                    <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200 sticky top-0 z-10">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-800" id="exam-title-display">Practice Exam</h2>
+                            <p class="text-xs font-semibold text-indigo-600" id="exam-units-display">Selected Units: 1, 2</p>
+                        </div>
+                        <button onclick="abortExam()" class="text-red-500 hover:text-red-700 font-bold text-sm px-4 py-2 rounded-lg bg-red-50 hover:bg-red-100 transition">
+                            <i class="fa-solid fa-xmark mr-1"></i> Exit
+                        </button>
+                    </div>
+
+                    <div id="exam-mcq-section" class="mb-10">
+                        <div class="flex items-center mb-4 border-b-2 border-slate-200 pb-2">
+                            <div class="bg-indigo-100 text-indigo-800 p-2 rounded-lg mr-3"><i class="fa-solid fa-list-ol"></i></div>
+                            <h3 class="text-lg font-bold text-slate-700 uppercase tracking-wider">Section A: MCQs</h3>
+                        </div>
+                        <div id="exam-mcq-container" class="space-y-4"></div>
+                    </div>
+
+                    <div id="exam-subj-section" class="mb-10 hidden">
+                        <div class="flex items-center mb-4 border-b-2 border-slate-200 pb-2 mt-8">
+                            <div class="bg-purple-100 text-purple-800 p-2 rounded-lg mr-3"><i class="fa-solid fa-pen-nib"></i></div>
+                            <h3 class="text-lg font-bold text-slate-700 uppercase tracking-wider">Section B: Subjective</h3>
+                        </div>
+                        <div id="exam-subj-container" class="space-y-6"></div>
+                    </div>
+
+                    <div id="exam-action-bar" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 mt-8">
+                        <p class="text-slate-500 text-sm font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Ensure all questions are answered.</p>
+                        <button id="btn-submit-exam" onclick="submitExam()" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-transform transform hover:-translate-y-1 text-lg flex items-center justify-center">
+                            Submit Exam <i class="fa-solid fa-check-double ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- EXAM RESULT SCREEN -->
+                <div id="exam-result" class="hidden mt-4 max-w-3xl mx-auto">
+                    <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-8 text-center relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                        
+                        <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-award text-4xl text-indigo-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800 mb-1">Exam Completed, Tishya!</h2>
+                        
+                        <div class="flex justify-center items-end space-x-2 my-8">
+                            <span id="final-score-value" class="text-7xl font-black text-indigo-600">0</span>
+                            <span id="final-score-max" class="text-3xl text-slate-400 font-bold pb-2">/ 25</span>
+                        </div>
+                        
+                        <div id="score-breakdown" class="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-8 hidden">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <div class="text-xs text-slate-500 mb-1 font-bold uppercase tracking-wider">MCQ Score</div>
+                                <div class="text-2xl font-black text-slate-800"><span id="mcq-score-display">0</span>/10</div>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <div class="text-xs text-slate-500 mb-1 font-bold uppercase tracking-wider">Subjective</div>
+                                <div class="text-2xl font-black text-slate-800"><span id="subj-score-display">0</span>/15</div>
+                            </div>
+                        </div>
+
+                        <p id="performance-feedback" class="text-lg font-medium text-slate-600 mb-8 px-4"></p>
+                        
+                        <button onclick="abortExam()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-8 rounded-xl transition-colors">
+                            Return to Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= TAB 2: MCQ STUDY BANK ================= -->
+            <div id="view-mcq-bank" class="hidden animate-fade-in pb-12">
+                <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-200 mb-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Chapter-wise MCQ Bank</h2>
+                            <p class="text-slate-500 mt-1 text-sm">Review questions by unit. Correct answers are highlighted in green.</p>
+                        </div>
+                        <div class="bg-indigo-50 text-indigo-800 font-bold py-2 px-4 rounded-lg border border-indigo-100 flex items-center shadow-sm">
+                            <i class="fa-solid fa-database mr-2 text-indigo-500"></i> Total Qs: <span id="bank-total-count" class="ml-1">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Filter Controls -->
+                    <div class="flex overflow-x-auto no-scrollbar gap-2 pb-2" id="mcq-filter-container">
+                        <button onclick="filterMCQ('all')" id="filter-mcq-all" class="filter-btn bg-indigo-600 text-white font-semibold py-1.5 px-4 rounded-full text-sm whitespace-nowrap shadow-sm">All Units</button>
+                        <button onclick="filterMCQ(1)" id="filter-mcq-1" class="filter-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold py-1.5 px-4 rounded-full text-sm whitespace-nowrap">Unit 1</button>
+                        <button onclick="filterMCQ(2)" id="filter-mcq-2" class="filter-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold py-1.5 px-4 rounded-full text-sm whitespace-nowrap">Unit 2</button>
+                        <button onclick="filterMCQ(3)" id="filter-mcq-3" class="filter-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold py-1.5 px-4 rounded-full text-sm whitespace-nowrap">Unit 3</button>
+                        <button onclick="filterMCQ(4)" id="filter-mcq-4" class="filter-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold py-1.5 px-4 rounded-full text-sm whitespace-nowrap">Unit 4</button>
+                        <button onclick="filterMCQ(5)" id="filter-mcq-5" class="filter-btn bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold py-1.5 px-4 rounded-full text-sm whitespace-nowrap">Unit 5</button>
+                    </div>
+                </div>
+
+                <div id="all-mcqs-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- MCQs rendered here via JS -->
+                </div>
+                <div id="mcq-empty-state" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200 border-dashed">
+                    <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i>
+                    <p class="text-slate-500 font-medium">No questions found for this selection.</p>
+                </div>
+            </div>
+
+            <!-- ================= TAB 3: PYQ TRACKER ================= -->
+            <div id="view-pyq-tracker" class="hidden animate-fade-in pb-12">
+                <div class="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row justify-between md:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Chapter-wise PYQ Tracker</h2>
+                        <p class="text-slate-500 mt-1 text-sm">Track your subjective question prep. Progress is saved automatically.</p>
+                    </div>
+                    <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <div class="w-12 h-12 rounded-full border-4 border-indigo-100 border-t-indigo-600 flex items-center justify-center relative">
+                            <div id="pyq-circular-progress" class="absolute inset-0 rounded-full border-4 border-indigo-600 rounded-full" style="clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 100%, 0 100%, 0 0, 50% 0); transform: rotate(0deg); transition: transform 0.5s ease-out;"></div>
+                            <div class="w-10 h-10 bg-slate-50 rounded-full absolute flex items-center justify-center z-10"><i class="fa-solid fa-book text-indigo-500"></i></div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-black text-indigo-600 leading-none" id="pyq-progress-text">0/15</div>
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">Completed</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pyq-list-container" class="space-y-6">
+                    <!-- Grouped PYQs rendered here via JS -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // ---------------- QUESTION DATA BANK (Unit-wise) ----------------
+        const unitNames = {
+            1: "Intro to Operating System",
+            2: "Concepts of Process & Synchronization",
+            3: "Memory Management",
+            4: "File System & Disk Scheduling",
+            5: "Unix/Linux & Shell Scripting"
+        };
+
+        const mcqBank = [
+            // UNIT 1 (7 Qs)
+            { unit: 1, q: "An Operating System is fundamentally a:", options: ["Hardware device", "System Software", "Application Software", "Compiler"], ans: 1 },
+            { unit: 1, q: "Which OS type allows multiple programs to reside in memory simultaneously to maximize CPU utilization?", options: ["Batch OS", "Time-sharing OS", "Multiprogramming OS", "Real-Time OS"], ans: 2 },
+            { unit: 1, q: "Which OS is characterized by strict time constraints where processing must occur within defined limits?", options: ["Real-time OS", "Distributed OS", "Time-sharing OS", "Embedded OS"], ans: 0 },
+            { unit: 1, q: "In which OS architecture are all services (file management, memory, etc.) running in a single large kernel space?", options: ["Microkernel", "Monolithic", "Layered", "Client-Server"], ans: 1 },
+            { unit: 1, q: "Which of the following is NOT a fundamental goal of an Operating System?", options: ["Convenience for the user", "Efficiency of hardware use", "Compiling source code to machine code", "Resource Management"], ans: 2 },
+            { unit: 1, q: "Which OS type gives the illusion to multiple users that they each have their own computer by switching CPU time rapidly?", options: ["Time-Sharing / Multitasking OS", "Batch Processing OS", "Real-Time OS", "Single User OS"], ans: 0 },
+            { unit: 1, q: "Linux and modern Windows are examples of which type of system?", options: ["Pure Microkernel", "Monolithic/Hybrid", "Batch System", "Strictly Real-time"], ans: 1 },
+            
+            // UNIT 2 (8 Qs)
+            { unit: 2, q: "What defines a 'Process' in an OS?", options: ["A program on disk", "A program in execution", "A thread", "A set of instructions"], ans: 1 },
+            { unit: 2, q: "Which data structure stores information about a specific process (State, PC, Registers)?", options: ["Memory Buffer", "Process Control Block (PCB)", "Page Table", "Stack Pointer"], ans: 1 },
+            { unit: 2, q: "When a process is waiting for an I/O operation to complete, it moves to which state?", options: ["Ready", "Running", "Blocked / Waiting", "Terminated"], ans: 2 },
+            { unit: 2, q: "Which scheduling algorithm assigns the CPU to the process that has the smallest execution time?", options: ["FCFS", "Shortest Job First (SJF)", "Round Robin (RR)", "Priority"], ans: 1 },
+            { unit: 2, q: "Round Robin scheduling heavily relies on a specific parameter called:", options: ["Priority levels", "Time Quantum (Time slice)", "Shortest execution time", "I/O burst time"], ans: 1 },
+            { unit: 2, q: "A situation where two or more processes are waiting indefinitely for resources held by each other is called:", options: ["Starvation", "Race Condition", "Deadlock", "Mutual Exclusion"], ans: 2 },
+            { unit: 2, q: "Which of the following is NOT a necessary condition for Deadlock?", options: ["Mutual Exclusion", "Hold and Wait", "Preemption", "Circular Wait"], ans: 2 },
+            { unit: 2, q: "What graph is commonly used to model resource allocation and detect deadlocks?", options: ["Gantt Chart", "Resource Allocation Graph (RAG)", "Directed Acyclic Graph", "Process Tree"], ans: 1 },
+            
+            // UNIT 3 (7 Qs)
+            { unit: 3, q: "The address generated by the CPU is known as:", options: ["Physical Address", "Logical Address", "MAC Address", "Absolute Address"], ans: 1 },
+            { unit: 3, q: "Moving processes from main memory to backing store (disk) and vice versa is called:", options: ["Paging", "Segmentation", "Swapping", "Compaction"], ans: 2 },
+            { unit: 3, q: "Unused memory space *inside* an allocated block or page is called:", options: ["External Fragmentation", "Internal Fragmentation", "Compaction", "Thrashing"], ans: 1 },
+            { unit: 3, q: "What technique is commonly used to solve External Fragmentation?", options: ["Paging", "Compaction", "First-Fit Allocation", "Deadlock Avoidance"], ans: 1 },
+            { unit: 3, q: "In Paging, the logical memory is divided into blocks called Pages. Physical memory is divided into blocks of identical size called:", options: ["Segments", "Partitions", "Frames", "Sectors"], ans: 2 },
+            { unit: 3, q: "Which memory allocation technique allocates the smallest available hole that is big enough for the process?", options: ["First Fit", "Best Fit", "Worst Fit", "Next Fit"], ans: 1 },
+            { unit: 3, q: "Which page replacement algorithm suffers from Belady's Anomaly (more frames can cause more page faults)?", options: ["LRU", "Optimal", "FIFO", "MRU"], ans: 2 },
+            
+            // UNIT 4 (6 Qs)
+            { unit: 4, q: "Which directory structure uses a tree topology but does not allow sharing of files/directories?", options: ["Single Level", "Two Level", "Tree Structured", "Acyclic Graph"], ans: 2 },
+            { unit: 4, q: "In which disk allocation method does each file occupy a set of continuous blocks on the disk?", options: ["Linked Allocation", "Contiguous Allocation", "Indexed Allocation", "Hashed Allocation"], ans: 1 },
+            { unit: 4, q: "Which allocation method uses pointers in each disk block to point to the next block of the file?", options: ["Indexed", "Contiguous", "Linked", "Tree"], ans: 2 },
+            { unit: 4, q: "Which disk scheduling algorithm services requests by moving the head from one end to the other, reversing direction at the ends (Elevator algorithm)?", options: ["SSTF", "FCFS", "SCAN", "C-SCAN"], ans: 2 },
+            { unit: 4, q: "C-SCAN (Circular SCAN) differs from SCAN because:", options: ["It calculates shortest seek time", "It reverses direction smoothly", "When it reaches the end, it jumps back to the beginning without servicing requests", "It is First Come First Serve"], ans: 2 },
+            { unit: 4, q: "An absolute file path starts from:", options: ["The current directory", "The user's home directory", "The root directory (/)", "The parent directory (..)"], ans: 2 },
+            
+            // UNIT 5 (7 Qs)
+            { unit: 5, q: "In Linux architecture, what is the core interface between hardware and processes?", options: ["Shell", "Kernel", "Terminal", "System Utilities"], ans: 1 },
+            { unit: 5, q: "Which command is used to display the present working directory in Linux?", options: ["cd", "dir", "pwd", "ls"], ans: 2 },
+            { unit: 5, q: "Which command changes file access permissions in Linux?", options: ["chown", "chmod", "chgrp", "mod"], ans: 1 },
+            { unit: 5, q: "The command used to search for a specific pattern of text inside a file is:", options: ["find", "search", "grep", "cat"], ans: 2 },
+            { unit: 5, q: "Which symbol is used to access the value of a variable in shell scripting?", options: ["&", "#", "$", "@"], ans: 2 },
+            { unit: 5, q: "Which command is used to remove an empty directory?", options: ["rm", "rmdir", "del", "mkdir"], ans: 1 },
+            { unit: 5, q: "To edit a file via command line, which of the following is a commonly used editor?", options: ["gcc", "grep", "vi / vim", "split"], ans: 2 }
+        ];
+
+        const pyqBank = [
+            // UNIT 1
+            { unit: 1, id: "u1_1", title: "Differentiate between Multiprogramming and Time-sharing Systems.", points: ["Multiprogramming maximizes CPU utilization by overlapping CPU and I/O.", "Time-sharing minimizes response time using time slices (quanta).", "Time-sharing is highly interactive for multiple users; Multiprogramming is traditionally batch-oriented."] },
+            { unit: 1, id: "u1_2", title: "Compare Monolithic and Microkernel OS Architecture.", points: ["Monolithic: All OS services run in kernel space. Fast but hard to debug/maintain.", "Microkernel: Minimal services in kernel space, rest in user space. Secure/stable but message passing adds overhead.", "Examples: Linux is mostly Monolithic; Mach is Microkernel."] },
+            { unit: 1, id: "u1_3", title: "List and explain fundamental goals and services of an Operating System.", points: ["Goals: Convenience (easy to use) and Efficiency (optimal hardware use).", "Services: Program execution, I/O operations, File system manipulation.", "Services: Communication, Error detection, Resource allocation."] },
+            
+            // UNIT 2
+            { unit: 2, id: "u2_1", title: "Explain the Process Life Cycle (Process States) with a diagram.", points: ["States: New, Ready, Running, Waiting (Blocked), Terminated.", "Ready queue holds processes waiting for CPU.", "Running to Waiting happens on I/O request; Running to Ready on interrupt/time slice."] },
+            { unit: 2, id: "u2_2", title: "What is a Process Control Block (PCB)? List its key components.", points: ["PCB is a data structure used by OS to store info about a specific process.", "Components: Process State, Program Counter, CPU Registers.", "Also contains CPU scheduling info, Memory limits, I/O status info."] },
+            { unit: 2, id: "u2_3", title: "Define Critical Section. List 3 requirements for solving Critical Section problem.", points: ["A code segment where shared variables are accessed/modified.", "1. Mutual Exclusion: Only one process in critical section at a time.", "2. Progress: Selection of next process shouldn't be indefinitely postponed. 3. Bounded Waiting."] },
+            { unit: 2, id: "u2_4", title: "Define Deadlock. State the four necessary conditions for deadlock.", points: ["Deadlock: Processes waiting indefinitely for resources held by each other.", "1. Mutual Exclusion, 2. Hold and Wait.", "3. No Preemption, 4. Circular Wait. (All 4 must hold simultaneously)."] },
+            
+            // UNIT 3
+            { unit: 3, id: "u3_1", title: "Differentiate between Internal and External Fragmentation.", points: ["Internal: Unused space inside an allocated memory block (common in Fixed Partitioning / Paging).", "External: Unused space between allocated blocks, making total free space unusable (common in Dynamic Partitioning / Segmentation).", "Compaction solves External fragmentation."] },
+            { unit: 3, id: "u3_2", title: "Explain Paging Address Translation mechanism.", points: ["Logical Address generated by CPU is divided into Page number (p) and Offset (d).", "Page table is used to map Page number (p) to Physical Frame number (f).", "Physical address = Frame number (f) + Offset (d)."] },
+            { unit: 3, id: "u3_3", title: "Explain Best Fit and Worst Fit contiguous memory allocation techniques.", points: ["Best Fit: Allocates the smallest available hole that is big enough. Minimizes wasted space but leaves tiny useless holes.", "Worst Fit: Allocates the largest available hole. Leaves a large leftover hole that might be useful.", "First fit allocates the first hole that is big enough."] },
+            { unit: 3, id: "u3_4", title: "Explain FIFO Page Replacement algorithm and mention its disadvantage.", points: ["Replaces the oldest page in main memory (First-In, First-Out).", "Maintains a queue of pages in memory.", "Disadvantage: Suffers from Belady's Anomaly (increasing frames might increase page faults)."] },
+            
+            // UNIT 4
+            { unit: 4, id: "u4_1", title: "Compare Contiguous and Linked Disk Space Allocation.", points: ["Contiguous: Fast sequential/direct access, but suffers from external fragmentation and file growth is hard.", "Linked: No external fragmentation (each block points to next), but slow random access and pointer overhead.", "FAT is a variation of linked allocation."] },
+            { unit: 4, id: "u4_2", title: "Explain SCAN and C-SCAN disk scheduling algorithms.", points: ["SCAN (Elevator): Head moves from one end to the other, servicing requests, then reverses direction.", "C-SCAN: Head moves from one end to the other, but upon reaching the end, it returns to the beginning WITHOUT servicing requests on the return trip.", "C-SCAN provides more uniform wait times."] },
+            { unit: 4, id: "u4_3", title: "Explain Single Level and Two Level Directory Structures.", points: ["Single Level: All files in one directory. Naming collisions are common; hard to organize for multiple users.", "Two Level: Master File Directory (MFD) points to User File Directories (UFD). Solves naming collision between users, isolates users."] },
+            
+            // UNIT 5
+            { unit: 5, id: "u5_1", title: "Explain the basic architecture of Unix/Linux Operating System.", points: ["Hardware layer at the bottom.", "Kernel: Core OS interacting directly with hardware, managing memory/processes.", "Shell: Command-line interface wrapping the kernel. Utilities/Apps run on top."] },
+            { unit: 5, id: "u5_2", title: "Explain purpose and syntax of: pwd, mkdir, chmod, grep.", points: ["pwd: Print Working Directory. Syntax: pwd", "mkdir: Create new directory. Syntax: mkdir [dirname]", "chmod: Change file permissions. Syntax: chmod [octal_mode] [filename]", "grep: Search text patterns in files. Syntax: grep 'pattern' [filename]"] },
+            { unit: 5, id: "u5_3", title: "Write a simple shell script to accept two numbers and add them.", points: ["#!/bin/bash", "echo 'Enter two numbers:'; read a; read b;", "sum=`expr $a + $b` OR sum=$(($a + $b))", "echo 'Sum is: '$sum"] }
+        ];
+
+        // ---------------- STATE VARIABLES ----------------
+        const state = {
+            exam: { mode: 'full', selectedUnits: [1,2,3,4,5], activeMCQs: [], activeSubj: [] },
+            pyq: JSON.parse(localStorage.getItem('gtuOsPyqCompleted_Tishya')) || {}
+        };
+
+        // ---------------- INITIALIZATION ----------------
+        document.addEventListener('DOMContentLoaded', () => {
+            renderUnitSelection();
+            document.getElementById('bank-total-count').innerText = mcqBank.length;
+            filterMCQ('all');
+            renderPYQTracker();
+            updatePyqProgress();
+        });
+
+        // ---------------- TAB NAVIGATION ----------------
+        function switchTab(tabId) {
+            ['exam', 'mcq-bank', 'pyq-tracker'].forEach(id => {
+                const btn = document.getElementById('tab-' + id);
+                btn.classList.remove('tab-active', 'bg-indigo-600', 'text-white', 'shadow-md');
+                btn.classList.add('tab-inactive', 'text-slate-500');
+                
+                document.getElementById('view-' + id).classList.add('hidden');
+                document.getElementById('view-' + id).classList.remove('block');
+            });
+            
+            const activeBtn = document.getElementById('tab-' + tabId);
+            activeBtn.classList.remove('tab-inactive', 'text-slate-500');
+            activeBtn.classList.add('tab-active', 'bg-indigo-600', 'text-white', 'shadow-md');
+            
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+            document.getElementById('view-' + tabId).classList.add('block');
+        }
+
+        // ---------------- MOCK EXAM LOGIC ----------------
+        function selectMode(mode) {
+            state.exam.mode = mode;
+            
+            const fullLabel = document.getElementById('label-mode-full');
+            const mcqLabel = document.getElementById('label-mode-mcq');
+            
+            if (mode === 'full') {
+                fullLabel.classList.add('border-indigo-500', 'bg-indigo-50');
+                fullLabel.classList.remove('border-slate-200');
+                mcqLabel.classList.remove('border-indigo-500', 'bg-indigo-50');
+                mcqLabel.classList.add('border-slate-200');
+            } else {
+                mcqLabel.classList.add('border-indigo-500', 'bg-indigo-50');
+                mcqLabel.classList.remove('border-slate-200');
+                fullLabel.classList.remove('border-indigo-500', 'bg-indigo-50');
+                fullLabel.classList.add('border-slate-200');
+            }
+        }
+
+        function renderUnitSelection() {
+            const container = document.getElementById('unit-selection-container');
+            container.innerHTML = '';
+            
+            [1, 2, 3, 4, 5].forEach(u => {
+                const isChecked = state.exam.selectedUnits.includes(u) ? 'checked' : '';
+                container.innerHTML += `
+                    <label class="cursor-pointer relative">
+                        <input type="checkbox" value="${u}" class="unit-checkbox sr-only" ${isChecked} onchange="toggleUnit(${u})">
+                        <div class="border-2 border-slate-200 rounded-xl p-3 text-center transition-colors hover:bg-slate-50 flex flex-col items-center gap-1 bg-white h-full justify-center">
+                            <i class="fa-solid fa-layer-group text-slate-400 text-lg transition-colors"></i>
+                            <span class="font-bold text-sm">Unit ${u}</span>
+                        </div>
+                    </label>
+                `;
+            });
+        }
+
+        function toggleUnit(unit) {
+            const index = state.exam.selectedUnits.indexOf(unit);
+            if (index > -1) {
+                state.exam.selectedUnits.splice(index, 1);
+            } else {
+                state.exam.selectedUnits.push(unit);
+            }
+            document.getElementById('unit-error').classList.add('hidden');
+        }
+
+        function toggleAllUnits() {
+            if (state.exam.selectedUnits.length === 5) {
+                state.exam.selectedUnits = [];
+            } else {
+                state.exam.selectedUnits = [1, 2, 3, 4, 5];
+            }
+            renderUnitSelection();
+            document.getElementById('unit-error').classList.add('hidden');
+        }
+
+        function startExam() {
+            if (state.exam.selectedUnits.length === 0) {
+                document.getElementById('unit-error').classList.remove('hidden');
+                return;
+            }
+
+            // Filter Question Banks by Selected Units
+            let filteredMCQs = mcqBank.filter(q => state.exam.selectedUnits.includes(q.unit));
+            let filteredPYQs = pyqBank.filter(q => state.exam.selectedUnits.includes(q.unit));
+
+            // Setup Active Questions (Max 10 MCQs, Max 5 Subjective)
+            state.exam.activeMCQs = shuffleArray([...filteredMCQs]).slice(0, 10);
+            
+            // Build UI
+            document.getElementById('exam-setup').classList.add('hidden');
+            document.getElementById('active-exam').classList.remove('hidden');
+            document.getElementById('exam-result').classList.add('hidden');
+            
+            document.getElementById('exam-units-display').innerText = "Selected Units: " + state.exam.selectedUnits.sort().join(', ');
+
+            // Render MCQs
+            const mcqContainer = document.getElementById('exam-mcq-container');
+            mcqContainer.innerHTML = '';
+            
+            state.exam.activeMCQs.forEach((q, index) => {
+                let optionsHtml = '';
+                q.options.forEach((opt, optIndex) => {
+                    optionsHtml += `
+                        <label class="flex items-start p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors mt-2 group" id="exam-label-${index}-${optIndex}">
+                            <input type="radio" name="exam-mcq-${index}" value="${optIndex}" class="mt-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                            <span class="ml-3 text-slate-700 text-sm group-hover:text-indigo-900 transition-colors">${opt}</span>
+                        </label>
+                    `;
+                });
+
+                mcqContainer.innerHTML += `
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-start mb-2">
+                            <span class="bg-indigo-100 text-indigo-800 rounded-full h-6 w-6 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0 mt-0.5">${index + 1}</span>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm md:text-base">${q.q}</p>
+                                <span class="text-xs font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded mt-1 inline-block">Unit ${q.unit}</span>
+                            </div>
+                        </div>
+                        <div class="ml-9">${optionsHtml}</div>
+                    </div>
+                `;
+            });
+
+            // Handle Subjective Section
+            const subjSection = document.getElementById('exam-subj-section');
+            if (state.exam.mode === 'full') {
+                state.exam.activeSubj = shuffleArray([...filteredPYQs]).slice(0, 5);
+                const subjContainer = document.getElementById('exam-subj-container');
+                subjContainer.innerHTML = '';
+                
+                state.exam.activeSubj.forEach((q, index) => {
+                    subjContainer.innerHTML += `
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-start">
+                                    <span class="bg-slate-200 text-slate-700 rounded-full h-6 w-6 flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0 mt-0.5">Q${index + 1}</span>
+                                    <div>
+                                        <p class="font-bold text-slate-800 text-sm md:text-base">${q.title}</p>
+                                        <span class="text-xs font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded mt-1 inline-block">Unit ${q.unit}</span>
+                                    </div>
+                                </div>
+                                <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2 py-1 rounded ml-2 whitespace-nowrap">3 Marks</span>
+                            </div>
+                            <textarea id="subj-input-${index}" rows="3" class="w-full mt-3 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-y text-sm" placeholder="Type your answer here..."></textarea>
+                            
+                            <div id="subj-eval-${index}" class="hidden mt-4 pt-4 border-t border-slate-100 bg-slate-50 p-4 rounded-lg">
+                                <h4 class="text-sm font-bold text-green-700 mb-2 flex items-center"><i class="fa-solid fa-key mr-2"></i> Model Answer Key:</h4>
+                                <ul class="list-disc pl-5 text-sm text-slate-700 mb-5 space-y-1">
+                                    ${q.points.map(p => `<li>${p}</li>`).join('')}
+                                </ul>
+                                
+                                <div class="flex flex-col sm:flex-row items-center justify-between bg-white p-4 border border-slate-200 rounded-lg shadow-sm gap-4">
+                                    <label class="font-bold text-slate-700 text-sm w-full sm:w-auto">Self-Evaluate (0-3 marks):</label>
+                                    <div class="flex items-center space-x-4 w-full sm:w-1/2">
+                                        <input type="range" id="subj-slider-${index}" min="0" max="3" step="1" value="0" oninput="document.getElementById('slider-val-${index}').innerText = this.value">
+                                        <span id="slider-val-${index}" class="font-black text-xl text-indigo-600 bg-indigo-50 border border-indigo-100 rounded px-3 py-1 text-center min-w-[2.5rem]">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                subjSection.classList.remove('hidden');
+                document.getElementById('exam-title-display').innerText = "Full Exam Practice";
+            } else {
+                subjSection.classList.add('hidden');
+                document.getElementById('exam-title-display').innerText = "MCQ Practice Mode";
+            }
+
+            // Reset action bar
+            document.getElementById('exam-action-bar').innerHTML = `
+                <p class="text-slate-500 text-sm font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Check your answers before submitting.</p>
+                <button id="btn-submit-exam" onclick="submitExam()" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-transform transform hover:-translate-y-1 text-lg flex items-center justify-center">
+                    Submit & Grade <i class="fa-solid fa-check-double ml-2"></i>
+                </button>
+            `;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function submitExam() {
+            let mcqScore = 0;
+            
+            // Grade MCQs
+            state.exam.activeMCQs.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="exam-mcq-${index}"]:checked`);
+                const correctIdx = q.ans;
+                
+                // Lock radios
+                document.querySelectorAll(`input[name="exam-mcq-${index}"]`).forEach(r => r.disabled = true);
+                
+                // Mark Correct
+                const correctLabel = document.getElementById(`exam-label-${index}-${correctIdx}`);
+                correctLabel.classList.remove('border-slate-200', 'hover:bg-slate-50');
+                correctLabel.classList.add('bg-green-50', 'border-green-500', 'text-green-900');
+                correctLabel.querySelector('span').classList.remove('text-slate-700', 'group-hover:text-indigo-900');
+                correctLabel.querySelector('span').classList.add('text-green-800', 'font-semibold');
+                correctLabel.innerHTML += `<i class="fa-solid fa-circle-check text-green-500 ml-auto text-xl"></i>`;
+
+                if (selected) {
+                    const selectedIdx = parseInt(selected.value);
+                    if (selectedIdx === correctIdx) {
+                        mcqScore++;
+                    } else {
+                        // Mark Wrong
+                        const wrongLabel = document.getElementById(`exam-label-${index}-${selectedIdx}`);
+                        wrongLabel.classList.remove('border-slate-200', 'hover:bg-slate-50');
+                        wrongLabel.classList.add('bg-red-50', 'border-red-400');
+                        wrongLabel.querySelector('span').classList.remove('text-slate-700', 'group-hover:text-indigo-900');
+                        wrongLabel.querySelector('span').classList.add('text-red-800', 'line-through');
+                        wrongLabel.innerHTML += `<i class="fa-solid fa-circle-xmark text-red-500 ml-auto text-xl"></i>`;
+                    }
+                }
+            });
+
+            document.getElementById('mcq-score-display').innerText = mcqScore;
+
+            if (state.exam.mode === 'full') {
+                // Reveal Subjective keys and disable textareas
+                state.exam.activeSubj.forEach((q, index) => {
+                    document.getElementById(`subj-input-${index}`).disabled = true;
+                    document.getElementById(`subj-eval-${index}`).classList.remove('hidden');
+                });
+                
+                document.getElementById('exam-action-bar').innerHTML = `
+                    <div class="w-full flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="text-indigo-800 bg-indigo-50 p-4 rounded-xl border border-indigo-100 flex-1 text-sm font-medium w-full">
+                            <i class="fa-solid fa-clipboard-check text-indigo-500 mr-2 text-lg"></i>
+                            <strong>Step 2:</strong> Review the model answers above. Rate your own answers using the slider (0 to 3), then click Finish.
+                        </div>
+                        <button onclick="calculateFinalScore(${mcqScore})" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-xl shadow-md transition-transform transform hover:-translate-y-1 text-lg flex items-center justify-center whitespace-nowrap">
+                            Finish Exam <i class="fa-solid fa-flag-checkered ml-2"></i>
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById('exam-subj-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                calculateFinalScore(mcqScore);
+            }
+        }
+
+        function calculateFinalScore(mcqScore) {
+            let totalScore = mcqScore;
+            let subjScore = 0;
+            
+            // Maximum calculation based on how many questions were ACTUALLY generated
+            let maxMcq = state.exam.activeMCQs.length; 
+            let maxSubj = state.exam.mode === 'full' ? (state.exam.activeSubj.length * 3) : 0;
+            let maxScore = maxMcq + maxSubj;
+            
+            if (state.exam.mode === 'full') {
+                state.exam.activeSubj.forEach((q, index) => {
+                    const slider = document.getElementById(`subj-slider-${index}`);
+                    subjScore += parseInt(slider.value);
+                    slider.disabled = true;
+                });
+                totalScore += subjScore;
+                
+                document.getElementById('subj-score-display').innerText = subjScore;
+                document.getElementById('score-breakdown').classList.remove('hidden');
+                document.getElementById('score-breakdown').innerHTML = `
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="text-xs text-slate-500 mb-1 font-bold uppercase tracking-wider">MCQ Score</div>
+                        <div class="text-2xl font-black text-slate-800">${mcqScore}<span class="text-sm text-slate-400">/${maxMcq}</span></div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="text-xs text-slate-500 mb-1 font-bold uppercase tracking-wider">Subjective</div>
+                        <div class="text-2xl font-black text-slate-800">${subjScore}<span class="text-sm text-slate-400">/${maxSubj}</span></div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('score-breakdown').classList.add('hidden');
+            }
+
+            document.getElementById('active-exam').classList.add('hidden');
+            document.getElementById('exam-result').classList.remove('hidden');
+            
+            document.getElementById('final-score-value').innerText = totalScore;
+            document.getElementById('final-score-max').innerText = "/ " + maxScore;
+            
+            const percentage = maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
+            const fbEl = document.getElementById('performance-feedback');
+            if (percentage >= 80) {
+                fbEl.innerHTML = "🌟 Amazing work, Tishya! You are thoroughly prepared.";
+                fbEl.className = "text-xl font-bold text-green-600 mb-8";
+            } else if (percentage >= 50) {
+                fbEl.innerHTML = "👍 Good effort. Keep reviewing the PYQs to solidify your knowledge.";
+                fbEl.className = "text-xl font-bold text-indigo-600 mb-8";
+            } else {
+                fbEl.innerHTML = "📚 Time to hit the books! Focus your study on the units you missed.";
+                fbEl.className = "text-xl font-bold text-red-500 mb-8";
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function abortExam() {
+            document.getElementById('active-exam').classList.add('hidden');
+            document.getElementById('exam-result').classList.add('hidden');
+            document.getElementById('exam-setup').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ---------------- MCQ BANK LOGIC ----------------
+        function filterMCQ(unit) {
+            // Update filter buttons UI
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+                btn.classList.add('bg-slate-100', 'text-slate-600');
+            });
+            const activeBtn = document.getElementById(`filter-mcq-${unit}`);
+            activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
+            activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+
+            // Render Questions
+            const container = document.getElementById('all-mcqs-container');
+            const emptyState = document.getElementById('mcq-empty-state');
+            container.innerHTML = '';
+            
+            const filtered = unit === 'all' ? mcqBank : mcqBank.filter(q => q.unit === unit);
+            
+            if (filtered.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                container.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                
+                filtered.forEach((q, index) => {
+                    let optionsHtml = '';
+                    q.options.forEach((opt, optIndex) => {
+                        const isCorrect = optIndex === q.ans;
+                        const styleClass = isCorrect ? 'bg-green-50 border border-green-300 text-green-900 font-semibold' : 'text-slate-600 border border-transparent';
+                        const icon = isCorrect ? '<i class="fa-solid fa-check-circle text-green-600 ml-auto"></i>' : '';
+                        
+                        optionsHtml += `
+                            <div class="flex items-center p-2 rounded-lg ${styleClass} text-sm mb-1">
+                                <span class="mr-2 font-bold opacity-40">${String.fromCharCode(65 + optIndex)}.</span> 
+                                ${opt}
+                                ${icon}
+                            </div>
+                        `;
+                    });
+
+                    container.innerHTML += `
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">Unit ${q.unit}</span>
+                                <span class="text-xs text-slate-400 font-semibold">Q${index + 1}</span>
+                            </div>
+                            <p class="font-bold text-slate-800 mb-3 text-sm">${q.q}</p>
+                            <div class="space-y-1">
+                                ${optionsHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        // ---------------- PYQ TRACKER LOGIC ----------------
+        function renderPYQTracker() {
+            const container = document.getElementById('pyq-list-container');
+            container.innerHTML = '';
+            
+            // Group by Unit
+            for (let u = 1; u <= 5; u++) {
+                const unitQs = pyqBank.filter(q => q.unit === u);
+                if (unitQs.length === 0) continue;
+
+                let qsHtml = unitQs.map((q, index) => {
+                    const isChecked = state.pyq[q.id] ? 'checked' : '';
+                    const textStyle = isChecked ? 'line-through text-slate-400' : 'text-slate-800';
+                    
+                    return `
+                        <div class="p-4 flex items-start gap-3 hover:bg-slate-50 transition-colors rounded-lg group">
+                            <div class="mt-0.5">
+                                <input type="checkbox" id="pyq-check-${q.id}" ${isChecked} onchange="togglePYQ('${q.id}')" 
+                                       class="h-5 w-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer shadow-sm transition-colors">
+                            </div>
+                            <div class="flex-1 cursor-pointer" onclick="document.getElementById('pyq-check-${q.id}').click()">
+                                <p id="pyq-text-${q.id}" class="font-semibold ${textStyle} transition-colors text-sm md:text-base leading-snug">Q${index + 1}. ${q.title}</p>
+                                <div class="mt-2 pl-3 border-l-2 border-indigo-100 group-hover:border-indigo-300 transition-colors">
+                                    <p class="text-[10px] font-black text-indigo-400 uppercase tracking-wider mb-1">Key Expected Points</p>
+                                    <ul class="list-disc pl-4 text-sm text-slate-500 space-y-0.5 marker:text-indigo-300">
+                                        ${q.points.map(p => `<li>${p}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML += `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                        <div class="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
+                            <h3 class="font-bold text-slate-700">Unit ${u}: <span class="text-slate-500 font-medium text-sm ml-1 hidden sm:inline">${unitNames[u]}</span></h3>
+                            <span class="text-xs font-bold bg-white border border-slate-200 text-slate-500 px-2 py-1 rounded-lg shadow-sm">${unitQs.length} Qs</span>
+                        </div>
+                        <div class="divide-y divide-slate-100 p-2">
+                            ${qsHtml}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function togglePYQ(id) {
+            const checkbox = document.getElementById(`pyq-check-${id}`);
+            const text = document.getElementById(`pyq-text-${id}`);
+            
+            state.pyq[id] = checkbox.checked;
+            localStorage.setItem('gtuOsPyqCompleted_Tishya', JSON.stringify(state.pyq));
+            
+            if (checkbox.checked) {
+                text.classList.add('line-through', 'text-slate-400');
+                text.classList.remove('text-slate-800');
+            } else {
+                text.classList.remove('line-through', 'text-slate-400');
+                text.classList.add('text-slate-800');
+            }
+            
+            updatePyqProgress();
+        }
+
+        function updatePyqProgress() {
+            let total = pyqBank.length;
+            let completed = 0;
+            
+            for (let key in state.pyq) {
+                if (state.pyq[key]) completed++;
+            }
+            
+            document.getElementById('pyq-progress-text').innerText = `${completed}/${total}`;
+            
+            // Circular progress ring logic (convert fraction to degrees)
+            const percentage = (completed / total);
+            const degrees = percentage * 360;
+            const progressRing = document.getElementById('pyq-circular-progress');
+            
+            // Using a simple rotation for visual effect
+            progressRing.style.transform = `rotate(${degrees}deg)`;
+            
+            // Dynamic color based on completion
+            if (percentage === 1) {
+                document.getElementById('pyq-progress-text').classList.replace('text-indigo-600', 'text-green-500');
+            } else {
+                document.getElementById('pyq-progress-text').classList.replace('text-green-500', 'text-indigo-600');
+            }
+        }
+
+        // Utility: Fisher-Yates Shuffle
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+    </script>
+</body>
+</html>
